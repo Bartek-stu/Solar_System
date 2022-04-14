@@ -37,19 +37,8 @@ int main(){
 
     constexpr size_t n = 60;
     constexpr size_t numberOfPlanets = 9;
-    GLfloat vertices[numberOfPlanets * ((n + 1) * 5)] {};
-    GLuint indices[numberOfPlanets * n * 3] {};
-
-
-
-//    for(int i = 0; i < 2 * (n + 1) * 5; ++i){
-//        cout << vertices[i] << "\t";
-//        if(!((i + 1) % 5)) cout << endl;
-//    }
-//    for(int i = 0; i < 2 * n * 3; ++i){
-//        cout << indices[i] << "\t";
-//        if(!((i + 1) % 3)) cout << endl;
-//    }
+    GLfloat vertices[(2 * numberOfPlanets - 1) * ((n + 1) * 5)] {};
+    GLuint indices[(2 * numberOfPlanets  - 1)* n * 3] {};
 
     Shader shaderProgram("default.vert", "default.frag");
 
@@ -83,8 +72,8 @@ int main(){
 //        glLoadIdentity();
         glDrawElements(GL_TRIANGLES, 3 * n * numberOfPlanets, GL_UNSIGNED_INT, nullptr);
 
-//        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-//        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(3 * sizeof(GLuint)));
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glDrawElements(GL_TRIANGLES, 3 * n * (numberOfPlanets - 1), GL_UNSIGNED_INT, (void*)(3 * n * numberOfPlanets * sizeof(GLuint)));
 
 
         drawSolarSystem(vertices, indices, n, tmp);
@@ -142,9 +131,12 @@ auto drawSolarSystem(GLfloat vertices[], GLuint indices[], size_t n, size_t iter
                                         0.4f * planetRadius[8] / planetRadius[0]};
 
     constexpr GLfloat positions[9] {0, 0.1, 0.225, 0.35, 0.475, 0.6, 0.725, 0.85, 0.9};
-    constexpr double to_radian = 0.0174532925;
-    auto sin_ = static_cast<GLfloat>(sin((int(iter) % 361) * to_radian));
-    auto cos_ = static_cast<GLfloat>(cos((int(iter) % 361) * to_radian));
+    constexpr double speed_scale = 0.3;
+    auto sin_ = static_cast<GLfloat>(sin(iter * speed_scale));
+    auto cos_ = static_cast<GLfloat>(cos(iter * speed_scale));
+
+
+    // ************************************************************ DRAWING PLANETS (AND SUN) **************************************************************
     drawCircle(vertices, indices, 0,
                scaledRadius[0],
                positions[0] * cos_, positions[0] * sin_,
@@ -152,42 +144,84 @@ auto drawSolarSystem(GLfloat vertices[], GLuint indices[], size_t n, size_t iter
                n);
     drawCircle(vertices + (n + 1) * 5, indices + (n * 3), 1,
                scaledRadius[1],
-               positions[1] * cos_, positions[1] * sin_,
+               positions[1] * static_cast<GLfloat>(cos(iter * speed_scale)), positions[1] * static_cast<GLfloat>(sin(iter * speed_scale)),
                std::make_tuple(1.f, 1.f, 1.f),
                n);
     drawCircle(vertices + 2 * (n + 1) * 5, indices + 2 * (n * 3), 2,
                scaledRadius[2],
-               positions[2] * cos_, positions[2] * sin_,
+               positions[2] * static_cast<GLfloat>(cos(0.345 * iter * speed_scale)), positions[2] * static_cast<GLfloat>(sin(0.345 * iter * speed_scale)),
                std::make_tuple(1.f, 1.f, 1.f),
                n);
     drawCircle(vertices + 3 * (n + 1) * 5, indices + 3 * (n * 3),3,
                scaledRadius[3],
-               positions[3] * cos_, positions[3] * sin_,
+               positions[3] * static_cast<GLfloat>(cos(0.241 * iter * speed_scale)), positions[3] * static_cast<GLfloat>(sin(0.241 * iter * speed_scale)),
                std::make_tuple(1.f, 1.f, 1.f),
                n);
     drawCircle(vertices + 4 * (n + 1) * 5, indices + 4 * (n * 3),4,
                scaledRadius[4],
-               positions[4] * cos_, positions[4] * sin_,
+               positions[4] * static_cast<GLfloat>(cos(0.128 * iter * speed_scale)), positions[4] * static_cast<GLfloat>(sin(0.128 * iter * speed_scale)),
                std::make_tuple(1.f, 1.f, 1.f),
                n);
     drawCircle(vertices + 5 * (n + 1) * 5, indices + 5 * (n * 3),5,
                scaledRadius[5],
-               positions[5] * cos_, positions[5] * sin_,
+               positions[5] * static_cast<GLfloat>(cos(0.02 * iter * speed_scale)), positions[5] * static_cast<GLfloat>(sin(0.02 * iter * speed_scale)),
                std::make_tuple(1.f, 1.f, 1.f),
                n);
     drawCircle(vertices + 6 * (n + 1) * 5, indices + 6 * (n * 3),6,
                scaledRadius[6],
-               positions[6] * cos_, positions[6] * sin_,
+               positions[6] * static_cast<GLfloat>(cos(0.0083 * iter * speed_scale)), positions[6] * static_cast<GLfloat>(sin(0.0083 * iter * speed_scale)),
                std::make_tuple(1.f, 1.f, 1.f),
                n);
     drawCircle(vertices + 7 * (n + 1) * 5, indices + 7 * (n * 3),7,
                scaledRadius[7],
-               positions[7] * cos_, positions[7] * sin_,
+               positions[7] * static_cast<GLfloat>(cos(0.0028 * iter * speed_scale)), positions[7] * static_cast<GLfloat>(sin(0.0028 * iter * speed_scale)),
                std::make_tuple(1.f, 1.f, 1.f),
                n);
     drawCircle(vertices + 8 * (n + 1) * 5, indices + 8 * (n * 3),8,
                scaledRadius[8],
-               positions[8] * cos_, positions[8] * sin_,
+               positions[8] * static_cast<GLfloat>(cos(0.00146 * iter * speed_scale)), positions[8] * static_cast<GLfloat>(sin(0.00146 * iter * speed_scale)),
+               std::make_tuple(1.f, 1.f, 1.f),
+               n);
+
+    // ************************************************************ DRAWING ORBITS **************************************************************
+    drawCircle(vertices + 9 * (n + 1) * 5, indices + 9 * (n * 3),9,
+               positions[1],
+               0, 0,
+               std::make_tuple(1.f, 1.f, 1.f),
+               n);
+    drawCircle(vertices + 10 * (n + 1) * 5, indices + 10 * (n * 3),10,
+               positions[2],
+               0, 0,
+               std::make_tuple(1.f, 1.f, 1.f),
+               n);
+    drawCircle(vertices + 11 * (n + 1) * 5, indices + 11 * (n * 3),11,
+               positions[3],
+               0, 0,
+               std::make_tuple(1.f, 1.f, 1.f),
+               n);
+    drawCircle(vertices + 12 * (n + 1) * 5, indices + 12 * (n * 3),12,
+               positions[4],
+               0, 0,
+               std::make_tuple(1.f, 1.f, 1.f),
+               n);
+    drawCircle(vertices + 13 * (n + 1) * 5, indices + 13 * (n * 3),13,
+               positions[5],
+               0, 0,
+               std::make_tuple(1.f, 1.f, 1.f),
+               n);
+    drawCircle(vertices + 14 * (n + 1) * 5, indices + 14 * (n * 3),14,
+               positions[6],
+               0, 0,
+               std::make_tuple(1.f, 1.f, 1.f),
+               n);
+    drawCircle(vertices + 15 * (n + 1) * 5, indices + 15 * (n * 3),15,
+               positions[7],
+               0, 0,
+               std::make_tuple(1.f, 1.f, 1.f),
+               n);
+    drawCircle(vertices + 16 * (n + 1) * 5, indices + 16 * (n * 3),16,
+               positions[8],
+               0, 0,
                std::make_tuple(1.f, 1.f, 1.f),
                n);
 }
