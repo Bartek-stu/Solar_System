@@ -10,6 +10,7 @@ public:
 
     VBO(GLfloat* vertices, GLsizeiptr size);
 
+    void Update(GLfloat *vertices, GLsizeiptr size);
     void Bind();
     void Unbind();
     void Delete();
