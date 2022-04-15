@@ -69,9 +69,9 @@ int main(){
         VAO1.Bind();
 
         for(int i = 0; i < numberOfPlanets - 1 + numberOfRings; ++i){
-            glDrawElements(GL_LINE_STRIP, n, GL_UNSIGNED_INT, (void *) ((n * (3 * numberOfPlanets + i))* sizeof(GLuint)));
+            glDrawElements(GL_LINE_STRIP, n, GL_UNSIGNED_INT, (void *) ((n * (3 * (numberOfPlanets + numberOfMoons) + i))* sizeof(GLuint)));
         }
-        glDrawElements(GL_TRIANGLES, 3 * n * numberOfPlanets, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 3 * n * (numberOfPlanets + numberOfMoons), GL_UNSIGNED_INT, nullptr);
 
         drawSolarSystem(vertices, indices, tmp);
         VBO1.Update(vertices, sizeof(vertices));
@@ -137,10 +137,20 @@ auto drawSolarSystem(GLfloat vertices[], GLuint indices[], size_t iter) ->void{
                    b_ellipse * positions[i] * static_cast<GLfloat>(sin(planetSpeed[i] * iter * speed_scale)),
                    planetColor[i]);
     }
+    // ************************************************************ DRAWING MOONS **************************************************************
+
+    for(int i = 6, j = numberOfPlanets; j < numberOfPlanets + numberOfMoons; ++i, ++j) {
+        drawCircle(vertices + j * (n + 1) * 5, indices + j * n * 3, j, 0.005f,
+                   a_ellipse * positions[i] * static_cast<GLfloat>(cos(planetSpeed[i] * iter * speed_scale)) + (scaledRadius[i] + 0.01f) * cos(planetSpeed[i] * iter * 5 * speed_scale),
+                   b_ellipse * positions[i] * static_cast<GLfloat>(sin(planetSpeed[i] * iter * speed_scale)) + (scaledRadius[i] + 0.01f) * sin(planetSpeed[i] * iter * 5 * speed_scale),
+                   planetColor[0]);
+
+    }
     // ************************************************************ DRAWING ORBITS **************************************************************
-    size_t orbits_vertices_offset = 9 * (n + 1) * 5;
-    size_t orbits_indices_offset = 9 * n * 3;
-    size_t orbits_indices_idx = 9 * (n + 1);
+    size_t circles_offset = numberOfPlanets + numberOfMoons;
+    size_t orbits_vertices_offset = circles_offset * (n + 1) * 5;
+    size_t orbits_indices_offset = circles_offset * n * 3;
+    size_t orbits_indices_idx = circles_offset * (n + 1);
     for(int i = 0; i < numberOfPlanets - 1; ++i) {
         drawEmptyCircle(vertices + orbits_vertices_offset + i * (n + 1) * 5, indices + orbits_indices_offset + i * n,
                         orbits_indices_idx + i * (n + 1),
@@ -149,10 +159,10 @@ auto drawSolarSystem(GLfloat vertices[], GLuint indices[], size_t iter) ->void{
                         std::make_tuple(1.f, 1.f, 1.f),
                         a_ellipse, b_ellipse);
     }
-
+//    // ************************************************************ DRAWING RINGS **************************************************************
     // saturn's rings
     auto tmp = 0.01f;
-    for(int i = numberOfPlanets - 1; i < numberOfPlanets + 2; ++i){
+    for(int i = numberOfPlanets - 1; i < numberOfPlanets + 2; ++i) {
         drawEmptyCircle(vertices + orbits_vertices_offset + i * (n + 1) * 5, indices + orbits_indices_offset + i * n,
                         orbits_indices_idx + i * (n + 1),
                         scaledRadius[6] + tmp,
@@ -181,5 +191,5 @@ auto drawSolarSystem(GLfloat vertices[], GLuint indices[], size_t iter) ->void{
                     b_ellipse * positions[8] * static_cast<GLfloat>(sin(planetSpeed[8] * iter * speed_scale)),
                     std::make_tuple(1.f, 1.f, 1.f),
                     1, 1);
-
 }
+

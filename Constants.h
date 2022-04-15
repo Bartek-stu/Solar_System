@@ -6,13 +6,14 @@
 
 constexpr std::size_t n = 90; // defines quality (number of triangles of a single circle)
 constexpr std::size_t numberOfPlanets = 9;
+constexpr std::size_t numberOfMoons = 3;
 constexpr std::size_t numberOfRings = 5;
-constexpr std::size_t verticesSize = (2 * numberOfPlanets - 1 + numberOfRings) * ((n + 1) * 5);
-constexpr std::size_t indicesSize = numberOfPlanets * n * 3 + (numberOfPlanets - 1 + numberOfRings) * n;
+constexpr std::size_t verticesSize = (2 * numberOfPlanets - 1 + numberOfRings + numberOfMoons) * ((n + 1) * 5);
+constexpr std::size_t indicesSize = (numberOfPlanets + numberOfMoons) * n * 3 + (numberOfPlanets - 1 + numberOfRings) * n;
 constexpr GLfloat planetRadius[9] {696.34 * 1e3, 2439.7, 6051.8, 6371,
                                    3389.5, 69911, 58232, 25362, 24622};
 constexpr GLfloat scaledRadius[9] {0.05,
-                                   2.f * planetRadius[1] / planetRadius[0],
+                                   3.f * planetRadius[1] / planetRadius[0],
                                    2.f * planetRadius[2] / planetRadius[0],
                                    2.f * planetRadius[3] / planetRadius[0],
                                    2.f * planetRadius[4] / planetRadius[0],
